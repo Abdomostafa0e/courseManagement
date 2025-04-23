@@ -1,8 +1,11 @@
 const express = require("express");
 require("dotenv").config({ path: "config.env" });
 const morgan = require("morgan");
+const dbConnection = require("./config/dbConn");
 
 const app = express();
+
+dbConnection();
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
