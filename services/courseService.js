@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const AppError = require("../utils/AppError");
 const Course = require("../models/courseModel");
+const AppFeatures = require("../utils/AppFeatures");
 
 exports.createCourse = asyncHandler(async (req, res) => {
   const newCourse = await Course.create(req.body);
@@ -13,10 +14,22 @@ exports.createCourse = asyncHandler(async (req, res) => {
 });
 
 exports.getAllCourses = asyncHandler(async (req, res) => {
-  const courses = await Course.find();
+  //Build Query
+  const features = new AppFeatures(Course.find(), req.query)
+    .filter()
+    .sort()
+    .fieldsLimit()
+    .search();
+
+  const paginatedFeatures = await features.paginate();
+  const { query, paginationResult } = paginatedFeatures;
+
+  //Execute Query
+  const courses = await query;
 
   res.status(200).json({
     results: courses.length,
+    paginationResult,
     data: courses,
   });
 });

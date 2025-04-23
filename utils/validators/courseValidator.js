@@ -50,14 +50,7 @@ exports.updateCourseValidator = [
   check("price")
     .optional()
     .isFloat({ gt: 0 })
-    .withMessage("Price must be a positive number")
-    .custom((val, { req }) => {
-      if (val == req.body.price) {
-        throw new Error("Price is same as old price..!!");
-      }
-      return true;
-    }),
-
+    .withMessage("Price must be a positive number"),
   validatorMW,
 ];
 exports.deleteCourseValidator = [
