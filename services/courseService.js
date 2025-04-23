@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const AppError = require("../utils/AppError");
 const Course = require("../models/courseModel");
 
 exports.createCourse = asyncHandler(async (req, res) => {
@@ -13,6 +14,7 @@ exports.createCourse = asyncHandler(async (req, res) => {
 
 exports.getAllCourses = asyncHandler(async (req, res) => {
   const courses = await Course.find();
+
   res.status(200).json({
     results: courses.length,
     data: courses,
@@ -22,6 +24,9 @@ exports.getAllCourses = asyncHandler(async (req, res) => {
 exports.getCourseById = asyncHandler(async (req, res, nxt) => {
   const { id } = req.params;
   const course = await Course.findById(id);
+  if (!course) {
+    return nxt(new AppError(`No Course found with that ID :${id}`, 404));
+  }
 
   res.status(200).json({
     status: "Success",
@@ -32,6 +37,9 @@ exports.getCourseById = asyncHandler(async (req, res, nxt) => {
 exports.deleteCourse = asyncHandler(async (req, res, nxt) => {
   const { id } = req.params;
   const course = await Course.findByIdAndDelete(id);
+  if (!course) {
+    return nxt(new AppError(`No Course found with that ID :${id}`, 404));
+  }
 
   res.status(204).send();
 });
@@ -39,6 +47,9 @@ exports.deleteCourse = asyncHandler(async (req, res, nxt) => {
 exports.updateCourse = asyncHandler(async (req, res, nxt) => {
   const { id } = req.params;
   const course = await Course.findByIdAndUpdate(id, req.body, { new: true });
+  if (!course) {
+    return nxt(new AppError(`No Course found with that ID :${id}`, 404));
+  }
 
   res.status(200).json({
     status: "Success",
