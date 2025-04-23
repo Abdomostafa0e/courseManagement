@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config({ path: "config.env" });
 const morgan = require("morgan");
 const dbConnection = require("./config/dbConn");
+const courseRouter = require("./routes/Course");
 
 const app = express();
 
@@ -11,9 +12,9 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.get("/", (req, res) => {
-  res.send("Hello, i am a server");
-});
+app.use(express.json());
+
+app.use("/api/courses", courseRouter);
 
 const port = process.env.PORT || 3000;
 
